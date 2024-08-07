@@ -4,7 +4,7 @@ from random import randint
 
 class Enemy(Tile):
 	def __init__(self,pos,size):
-		super().__init__(pos,size,'2.png')
+		super().__init__(pos,size,r"graphics\enemy\run\2.png")
 		self.rect = self.image.get_rect(topleft = pos)
 		self.speed = randint(1,2)
 
@@ -24,11 +24,11 @@ class Enemy(Tile):
 
 class Coin(Tile):
 	def __init__(self,pos,size):
-		super().__init__(pos,size,'coin.png')
+		super().__init__(pos,size,'graphics\coins\coin.png')
 		self.rect = self.image.get_rect(topleft = pos)
 
 class Flag(Tile):
 	def __init__(self,pos,size):
-		super().__init__(pos,size,'End (Idle).png')
+		super().__init__(pos,size,'graphics\overworld\End (Idle).png')
 		self.rect = self.image.get_rect(topleft = pos)
 
