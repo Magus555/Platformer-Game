@@ -2,7 +2,7 @@ import pygame, sys
 from tiles import Tile 
 from settings import *
 from player import Player
-from entities import Enemy, Coin, Flag
+from entities import Enemy, Coin, Flag, Explosion
 
 class Level:
 	def __init__(self,levelData,surface):
@@ -30,6 +30,7 @@ class Level:
 		self.flag = pygame.sprite.GroupSingle()
 		self.hiddenBlocks = pygame.sprite.Group()
 		self.bricks = pygame.sprite.Group()
+		self.explosion = pygame.sprite.Group()
 
 		for rowIndex,row in enumerate(layout):
 			for colIndex,cell in enumerate(row):
@@ -149,13 +150,16 @@ class Level:
 		enemyCollisionsTop = pygame.sprite.spritecollide(self.player.sprite,self.enemy,False)
 		enemyCollisionsSide = pygame.sprite.spritecollide(self.player.sprite,self.enemy,False)
 		if enemyCollisionsTop:
-			for enemy in enemyCollisionsTop:
-				enemyCenter = enemy.rect.centery
-				enemyTop = enemy.rect.top
+			for thisEnemy in enemyCollisionsTop:
+				enemyCenter = thisEnemy.rect.centery
+				enemyTop = thisEnemy.rect.top
 				playerBottom = self.player.sprite.rect.bottom
 				if enemyTop < playerBottom < enemyCenter and self.player.sprite.direction.y >= 0:
 					self.player.sprite.direction.y = -15
-					enemy.kill()
+					(x,y) = thisEnemy.rect.topleft
+					thisEnemy.kill()
+					explosionSprite = Explosion((x,y),64)
+					self.explosion.add(explosionSprite)
 					self.score = self.score + 50
 
 		if enemyCollisionsSide:
@@ -213,6 +217,9 @@ class Level:
 		self.enemy.update(self.worldShift)
 		self.enemy.draw(self.displaySurface)
 
+		self.explosion.update(self.worldShift)
+		self.explosion.draw(self.displaySurface)
+
 		self.coin.update(self.worldShift)
 		self.coin.draw(self.displaySurface)
 
@@ -221,6 +228,7 @@ class Level:
 
 		self.player.update(self.playerHealth)
 		self.player.draw(self.displaySurface)
+
 
 
 		self.scrollX()

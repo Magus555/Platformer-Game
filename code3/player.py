@@ -92,9 +92,6 @@ class Player(pygame.sprite.Sprite):
 			if self.frameIndex >= self.loopIndex: self.frameIndex = 0
 			self.lastUpdate = currentTime
 
-
-			
-
 	def update(self,playerHealth):
 		self.frameIncrementer()
 		self.getInput()

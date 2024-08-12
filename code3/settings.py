@@ -8,7 +8,7 @@ levelMap1 = [
 '                            ',
 '           BBB      C       ',
 'X      X           CCC    FH',
-'X               E          H',
+'X               E    E     H',
 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX']
 
 levelMap2 = [
