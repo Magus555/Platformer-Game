@@ -4,7 +4,7 @@ from random import randint
 
 class Enemy(Tile):
     def __init__(self,pos,size):
-        super().__init__(pos,size,"graphics/enemy/run/2.png")
+        super().__init__(pos,size,size,"graphics/enemy/run/2.png")
         self.rect = self.image.get_rect(topleft = pos)
         self.speed = randint(1,2)
         self.size = size
@@ -44,19 +44,9 @@ class Enemy(Tile):
             self.frameIncrementer()
             self.rect.x += shift
             self.move()
-class Coin(Tile):
-    def __init__(self,pos,size):
-        super().__init__(pos,size,'graphics/coins/coin.png')
-        self.rect = self.image.get_rect(topleft = pos)
-
-class Flag(Tile):
-    def __init__(self,pos,size):
-        super().__init__(pos,size,'graphics/overworld/End (Idle).png')
-        self.rect = self.image.get_rect(topleft = pos)
-
 class Explosion(Tile):
     def __init__(self,pos,size):
-        super().__init__(pos,size,'graphics/enemy/explosion/1.png')
+        super().__init__(pos,size,size,'graphics/enemy/explosion/1.png')
         self.rect = self.image.get_rect(topleft = pos)
 
         self.lastUpdate = 0

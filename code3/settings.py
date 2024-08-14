@@ -11,6 +11,8 @@ levelMap1 = [
 'X               E    E     H',
 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX']
 
+
+
 levelMap2 = [
 '                            ',
 '                            ',
@@ -38,6 +40,6 @@ levelMap3 = [
 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ']
 
 tileSize = 64
-screenWidth = 1920
+screenWidth = 2560
 screenHeight = 1080
 

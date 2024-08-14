@@ -118,6 +118,7 @@ def levelSelect(level):
         pygame.display.update()
         screen.fill('black')
 
+        
 def game(level):
     startTicks=pygame.time.get_ticks()
     timeDeath = 0
@@ -143,7 +144,9 @@ def game(level):
         level.run()
 
         pygame.display.update()
-        clock.tick(60)
+        clock.tick(500)
+
+
 
     screen.fill('black')
 

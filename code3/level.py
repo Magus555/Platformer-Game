@@ -1,8 +1,8 @@
 import pygame, sys
-from tiles import Tile 
+from tiles import Tile, backgroundTile, Coin, Flag
 from settings import *
 from player import Player
-from entities import Enemy, Coin, Flag, Explosion
+from entities import Enemy, Explosion
 
 class Level:
     def __init__(self,levelData,surface):
@@ -11,9 +11,11 @@ class Level:
         self.levelComplete = 0
         self.lives = 0
         self.score = 0
-        self.displaySurface = surface 
+        self.displaySurface = surface
+        self.backgroundSurface = pygame.Surface((screenWidth,screenHeight))
         self.setupLevel(levelData)
         self.worldShift = 0
+        self.scrollYspeed = 15
         self.currentX = 0
         self.playerHealth = 2
         self.hitCD = 0
@@ -21,6 +23,11 @@ class Level:
         self.coinCount = 0
         self.timeOfHit = 1000000000000000000000000000000000000000000000000000000000
         self.spawnDistance = 0
+        self.scroll = 0
+
+        self.scroll_x = 0
+        self.scroll_y = 0
+        self.background_y = screenHeight
 
     def setupLevel(self,layout):
         self.tiles = pygame.sprite.Group()
@@ -31,25 +38,34 @@ class Level:
         self.hiddenBlocks = pygame.sprite.Group()
         self.bricks = pygame.sprite.Group()
         self.explosion = pygame.sprite.Group()
+        self.backgroundTiles = pygame.sprite.Group()
+
+        for y in range(0,8):
+            for x in range(0,16):
+                image = pygame.image.load("graphics/Background/Brown.png").convert_alpha()
+                image = pygame.transform.scale(image,(screenWidth/16,screenHeight/8))
+                self.backgroundSurface.blit(image, (screenWidth/16 * x,screenHeight/8 * y), area=None)
+
+     
 
         for rowIndex,row in enumerate(layout):
             for colIndex,cell in enumerate(row):
                 x = colIndex * (tileSize)
                 y = rowIndex * (tileSize)
                 if cell == 'X':
-                    tile = Tile((x,y),64,"graphics/tiles/grass block.png")
+                    tile = Tile((x,y),64,64,"graphics/tiles/grass block.png")
                     self.tiles.add(tile)
                 if cell == 'Y':
-                    tile = Tile((x,y),64,"graphics/tiles/desert block.png")
+                    tile = Tile((x,y),64,64,"graphics/tiles/desert block.png")
                     self.tiles.add(tile)
                 if cell == 'Z':
-                    tile = Tile((x,y),64,"graphics/tiles/alien block.png")
+                    tile = Tile((x,y),64,64,"graphics/tiles/alien block.png")
                     self.tiles.add(tile)
                 if cell == 'B':
-                    tile = Tile((x,y),64,"graphics/tiles/brick block.png")
+                    tile = Tile((x,y),64,64,"graphics/tiles/brick block.png")
                     self.bricks.add(tile)
                 if cell == 'H':
-                    tile = Tile((x,y),64,"graphics/tiles/grass block.png")
+                    tile = Tile((x,y),64,64,"graphics/tiles/grass block.png")
                     self.hiddenBlocks.add(tile)
                 if cell == 'P':
                     self.spawnPosition=(x,y)
@@ -64,6 +80,7 @@ class Level:
                 if cell == 'F':
                     flagSprite = Flag((x,y),64)
                     self.flag.add(flagSprite)
+                    
 
     def scrollX(self):
         player = self.player.sprite
@@ -81,6 +98,12 @@ class Level:
         else:
             self.worldShift = 0
             player.speed = 8
+    
+
+
+
+
+
     
     def respawn(self):
         self.player.sprite.rect.x=self.spawnPosition[0]
@@ -195,6 +218,20 @@ class Level:
             self.finishState = True
 
     def run(self):
+        
+
+        self.scroll_y += 1
+        self.background_y += 1
+
+        self.displaySurface.blit(self.backgroundSurface, (self.scroll_x, self.scroll_y))
+        self.displaySurface.blit(self.backgroundSurface, (self.scroll_x, self.background_y))
+
+        if self.scroll_y >= screenHeight:
+            self.scroll_y = -screenHeight+1
+
+        if self.background_y >= screenHeight:
+            self.background_y = -screenHeight+1
+
 
         self.fallOutOfBounds()
 
@@ -229,6 +266,8 @@ class Level:
         self.player.update(self.playerHealth)
         self.player.draw(self.displaySurface)
 
+
+        
 
 
         self.scrollX()
