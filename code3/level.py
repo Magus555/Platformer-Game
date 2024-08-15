@@ -1,4 +1,5 @@
 import pygame, sys
+from pytmx import load_pygame
 from tiles import Tile, backgroundTile, Coin, Flag
 from settings import *
 from player import Player
@@ -11,9 +12,10 @@ class Level:
         self.levelComplete = 0
         self.lives = 0
         self.score = 0
-        self.displaySurface = surface
         self.backgroundSurface = pygame.Surface((screenWidth,screenHeight))
-        self.setupLevel(levelData)
+        self.levelSurface = pygame.Surface((screenWidth,screenHeight))
+        self.displaySurface = surface
+        self.setupLevel()
         self.worldShift = 0
         self.scrollYspeed = 15
         self.currentX = 0
@@ -29,16 +31,7 @@ class Level:
         self.scroll_y = 0
         self.background_y = screenHeight
 
-    def setupLevel(self,layout):
-        self.tiles = pygame.sprite.Group()
-        self.player = pygame.sprite.GroupSingle()
-        self.enemy = pygame.sprite.Group()
-        self.coin = pygame.sprite.Group()
-        self.flag = pygame.sprite.GroupSingle()
-        self.hiddenBlocks = pygame.sprite.Group()
-        self.bricks = pygame.sprite.Group()
-        self.explosion = pygame.sprite.Group()
-        self.backgroundTiles = pygame.sprite.Group()
+    def setupLevel(self):
 
         for y in range(0,8):
             for x in range(0,16):
@@ -46,40 +39,24 @@ class Level:
                 image = pygame.transform.scale(image,(screenWidth/16,screenHeight/8))
                 self.backgroundSurface.blit(image, (screenWidth/16 * x,screenHeight/8 * y), area=None)
 
-     
+        tmx_data = load_pygame('mapLevel1.tmx')
+        self.sprite_group = pygame.sprite.Group()
+        self.player = pygame.sprite.GroupSingle()
 
-        for rowIndex,row in enumerate(layout):
-            for colIndex,cell in enumerate(row):
-                x = colIndex * (tileSize)
-                y = rowIndex * (tileSize)
-                if cell == 'X':
-                    tile = Tile((x,y),64,64,"graphics/tiles/grass block.png")
-                    self.tiles.add(tile)
-                if cell == 'Y':
-                    tile = Tile((x,y),64,64,"graphics/tiles/desert block.png")
-                    self.tiles.add(tile)
-                if cell == 'Z':
-                    tile = Tile((x,y),64,64,"graphics/tiles/alien block.png")
-                    self.tiles.add(tile)
-                if cell == 'B':
-                    tile = Tile((x,y),64,64,"graphics/tiles/brick block.png")
-                    self.bricks.add(tile)
-                if cell == 'H':
-                    tile = Tile((x,y),64,64,"graphics/tiles/grass block.png")
-                    self.hiddenBlocks.add(tile)
-                if cell == 'P':
-                    self.spawnPosition=(x,y)
-                    playerSprite = Player((x,y))
-                    self.player.add(playerSprite)
-                if cell == 'E':
-                    enemySprite = Enemy((x,y),64)
-                    self.enemy.add(enemySprite)
-                if cell == 'C':
-                    coinSprite = Coin((x,y),64)
-                    self.coin.add(coinSprite)				
-                if cell == 'F':
-                    flagSprite = Flag((x,y),64)
-                    self.flag.add(flagSprite)
+        # cycle through all layers
+        for layer in tmx_data.visible_layers:
+            # if layer.name in ('Floor', 'Plants and rocks', 'Pipes')
+            if hasattr(layer,'data'):
+                for x,y,surf in layer.tiles():
+                    pos = (x * 64, y * 48)
+                    Tile(pos = pos, width = 64, height = 48, surf = surf, groups = self.sprite_group)
+        
+        self.spawnPosition=(500,500)
+        playerSprite = Player((500,500))
+        self.player.add(playerSprite)
+
+
+
                     
 
     def scrollX(self):
@@ -122,7 +99,7 @@ class Level:
         player = self.player.sprite
         player.rect.x += player.direction.x * player.speed
 
-        for sprite in self.tiles.sprites():
+        for sprite in self.sprite_group.sprites():
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x < 0: 
                     player.rect.left = sprite.rect.right
@@ -131,7 +108,7 @@ class Level:
                     player.rect.right = sprite.rect.left
                     self.currentX = player.rect.right
 
-        for sprite in self.bricks.sprites():
+        for sprite in self.sprite_group.sprites():
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x < 0: 
                     player.rect.left = sprite.rect.right
@@ -144,7 +121,7 @@ class Level:
         player = self.player.sprite
         player.applyGravity()
 
-        for sprite in self.tiles.sprites():
+        for sprite in self.sprite_group.sprites():
             if sprite.rect.colliderect(player.rect) == True:
                 if player.direction.y > 0: 
                     player.rect.bottom = sprite.rect.top
@@ -154,7 +131,7 @@ class Level:
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = 0
         
-        for sprite in self.bricks.sprites():
+        for sprite in self.sprite_group.sprites():
             if sprite.rect.colliderect(player.rect) == True:
                 if player.direction.y > 0: 
                     player.rect.bottom = sprite.rect.top
@@ -220,57 +197,29 @@ class Level:
     def run(self):
         
 
-        self.scroll_y += 1
-        self.background_y += 1
-
-        self.displaySurface.blit(self.backgroundSurface, (self.scroll_x, self.scroll_y))
-        self.displaySurface.blit(self.backgroundSurface, (self.scroll_x, self.background_y))
-
-        if self.scroll_y >= screenHeight:
-            self.scroll_y = -screenHeight+1
-
-        if self.background_y >= screenHeight:
-            self.background_y = -screenHeight+1
-
-
-        self.fallOutOfBounds()
-
-        self.enemyCollisionReverse()
-        self.playerEnemyCollisionCheck()
+        
 
         self.horizontalMovementCollision()
         self.verticalMovementCollision()
 
-        self.playerCoinCollisionCheck()
-        self.playerFlagCollisionCheck()
-        
-        self.tiles.update(self.worldShift)
-        self.tiles.draw(self.displaySurface)
-        self.hiddenBlocks.update(self.worldShift)
-        self.hiddenBlocks.draw(self.displaySurface)
-        self.bricks.update(self.worldShift)
-        self.bricks.draw(self.displaySurface)
-        
-        self.enemy.update(self.worldShift)
-        self.enemy.draw(self.displaySurface)
-
-        self.explosion.update(self.worldShift)
-        self.explosion.draw(self.displaySurface)
-
-        self.coin.update(self.worldShift)
-        self.coin.draw(self.displaySurface)
-
-        self.flag.update(self.worldShift)
-        self.flag.draw(self.displaySurface)
+        self.sprite_group.draw(self.levelSurface)
 
         self.player.update(self.playerHealth)
-        self.player.draw(self.displaySurface)
+        self.player.draw(self.levelSurface)
 
 
         
+        self.displaySurface.blit(self.levelSurface,(0,0),area=(self.player.sprite.rect.topleft[0]-(screenWidth/2),0,screenWidth,screenHeight))
+
+        self.levelSurface.fill('black')
 
 
-        self.scrollX()
+        
+        
+      
+
+        
+
 
 
 

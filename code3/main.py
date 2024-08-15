@@ -106,7 +106,7 @@ def levelSelect(level):
             if thirdButton.draw(screen):
                 level = Level((levelMap3),screen)
                 game(level)
-                saveUpdate(level.coinCount,level.lives,0)
+                saveUpdate(level.coinCount,level.lives,0) 
         else:
             lockedThirdButton.draw(screen)
         
@@ -137,14 +137,14 @@ def game(level):
             timeDeath = 1
         level.currentClock = seconds
         screen.fill('black')
-        screen.blit(Text(("Lives: "+str(level.lives))), (50,50))
-        screen.blit(Text(str(timer)),(1700,50))
-        screen.blit(Text("Coins: "+str(level.coinCount)),(50,100))
-        screen.blit(Text("Score: "+str(level.score)),(1500,50))
         level.run()
+        screen.blit(Text(("Lives: "+str(level.lives))), (50,50))
+        screen.blit(Text(str(timer)),(2400,50))
+        screen.blit(Text("Coins: "+str(level.coinCount)),(50,100))
+        screen.blit(Text("Score: "+str(level.score)),(2200,50))
 
         pygame.display.update()
-        clock.tick(500)
+        clock.tick(60)
 
 
 

@@ -1,0 +1,47 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "mapLevel1.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "mapLevel1.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 258.75,
+                "y": 98
+            }
+        },
+        "myTileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/dylon/OneDrive/Documents/GitHub/Platformer-Game",
+    "last.externalTilesetPath": "C:/Users/dylon/OneDrive/Documents/GitHub/Platformer-Game",
+    "last.imagePath": "C:/Users/dylon/Downloads/Free/Terrain",
+    "map.lastUsedExportFilter": "CSV files (*.csv)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 128,
+    "map.tileWidth": 128,
+    "openFiles": [
+        "mapLevel1.tmx",
+        "myTileset.tsx"
+    ],
+    "project": "levelMap1.tiled-project",
+    "recentFiles": [
+        "myTileset.tsx",
+        "mapLevel1.tmx"
+    ],
+    "tileset.lastUsedFilter": "All Files (*)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

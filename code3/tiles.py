@@ -1,9 +1,9 @@
 import pygame 
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self,pos,width,height,text):
-        super().__init__()
-        self.image = pygame.image.load(text).convert_alpha()
+    def __init__(self,pos,width,height,surf,groups):
+        super().__init__(groups)
+        self.image = surf
         self.image = pygame.transform.scale(self.image,(width,height))
         self.rect = self.image.get_rect(topleft = pos)
 

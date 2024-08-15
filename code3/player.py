@@ -79,6 +79,8 @@ class Player(pygame.sprite.Sprite):
 
 
 
+
+
     def applyGravity(self):
         self.direction.y += self.gravity
         self.rect.y += self.direction.y
@@ -96,5 +98,5 @@ class Player(pygame.sprite.Sprite):
         self.frameIncrementer()
         self.getInput()
         self.imageFlipped(playerHealth)
-    
+
         
