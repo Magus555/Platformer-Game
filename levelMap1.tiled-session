@@ -9,13 +9,19 @@
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        ":/automap-tiles.tsx": {
+            "scaleInDock": 1
+        },
         "mapLevel1.tmx": {
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 258.75,
-                "y": 98
+                "x": 476.5,
+                "y": 156.5
             }
+        },
+        "myTerrainSet.tsx": {
+            "scaleInEditor": 1
         },
         "myTileset.tsx": {
             "scaleInDock": 1,
@@ -27,16 +33,18 @@
     "last.imagePath": "C:/Users/dylon/Downloads/Free/Terrain",
     "map.lastUsedExportFilter": "CSV files (*.csv)",
     "map.lastUsedFormat": "tmx",
-    "map.tileHeight": 128,
-    "map.tileWidth": 128,
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 60,
     "openFiles": [
         "mapLevel1.tmx",
         "myTileset.tsx"
     ],
     "project": "levelMap1.tiled-project",
     "recentFiles": [
-        "myTileset.tsx",
-        "mapLevel1.tmx"
+        "mapLevel1.tmx",
+        "myTerrainSet.tsx",
+        "myTileset.tsx"
     ],
     "tileset.lastUsedFilter": "All Files (*)",
     "tileset.lastUsedFormat": "tsx",

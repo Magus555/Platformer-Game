@@ -3,8 +3,8 @@ from tiles import Tile
 from random import randint
 
 class Enemy(Tile):
-    def __init__(self,pos,size):
-        super().__init__(pos,size,size,"graphics/enemy/run/2.png")
+    def __init__(self,pos,size,groups):
+        super().__init__(pos,size,size,pygame.image.load("graphics/enemy/run/2.png"),groups)
         self.rect = self.image.get_rect(topleft = pos)
         self.speed = randint(1,2)
         self.size = size
@@ -40,13 +40,12 @@ class Enemy(Tile):
         
         self.image = pygame.transform.scale(self.image,(self.size,self.size))
 
-    def update(self,shift):
+    def update(self):
             self.frameIncrementer()
-            self.rect.x += shift
             self.move()
 class Explosion(Tile):
-    def __init__(self,pos,size):
-        super().__init__(pos,size,size,'graphics/enemy/explosion/1.png')
+    def __init__(self,pos,size,groups):
+        super().__init__(pos,size,size,pygame.image.load('graphics/enemy/explosion/1.png'),groups)
         self.rect = self.image.get_rect(topleft = pos)
 
         self.lastUpdate = 0
@@ -58,9 +57,8 @@ class Explosion(Tile):
         for i in range(1,8):
             self.deathAnim.append(pygame.image.load('graphics/enemy/explosion/'+str(i)+'.png'))
 
-    def update(self,shift):
+    def update(self):
 
-        self.rect.x += shift
 
         currentTime = pygame.time.get_ticks()
         if currentTime - self.lastUpdate > self.animationSpeed:

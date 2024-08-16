@@ -71,7 +71,6 @@ class Player(pygame.sprite.Sprite):
             
         if self.direction.y < 0:
             self.image = self.getImage(self.jumpFrame,0)
-            print(self.frameIndex)
         
         elif self.onGround == False:
             self.image = self.fallFrames

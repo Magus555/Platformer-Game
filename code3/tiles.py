@@ -7,17 +7,17 @@ class Tile(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image,(width,height))
         self.rect = self.image.get_rect(topleft = pos)
 
-    def update(self,x_shift):
-        self.rect.x += x_shift
+
+
 
 class Coin(Tile):
-    def __init__(self,pos,size):
-        super().__init__(pos,size,size,'graphics/coins/coin.png')
+    def __init__(self,pos,size,groups):
+        super().__init__(pos,size,size,pygame.image.load('graphics/coins/coin.png'),groups)
         self.rect = self.image.get_rect(topleft = pos)
 
 class Flag(Tile):
-    def __init__(self,pos,size):
-        super().__init__(pos,size,size,'graphics/overworld/End (Idle).png')
+    def __init__(self,pos,size,groups):
+        super().__init__(pos,size,size,pygame.image.load('graphics/overworld/End (Idle).png'),groups)
         self.rect = self.image.get_rect(topleft = pos)
 
 class backgroundTile(Tile):
