@@ -3,25 +3,34 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "mapLevel1.tmx",
+    "activeFile": "Background.tsx",
     "expandedProjectPaths": [
         "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
         ":/automap-tiles.tsx": {
             "scaleInDock": 1
+        },
+        "Background.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "mapLevel1.tmx": {
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 476.5,
-                "y": 156.5
+                "x": 396.75,
+                "y": 236.5
             }
         },
         "myTerrainSet.tsx": {
-            "scaleInEditor": 1
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 4
         },
         "myTileset.tsx": {
             "scaleInDock": 1,
@@ -29,27 +38,32 @@
         }
     },
     "last.exportedFilePath": "C:/Users/dylon/OneDrive/Documents/GitHub/Platformer-Game",
-    "last.externalTilesetPath": "C:/Users/dylon/OneDrive/Documents/GitHub/Platformer-Game",
-    "last.imagePath": "C:/Users/dylon/Downloads/Free/Terrain",
+    "last.externalTilesetPath": "C:/Users/dylon/Downloads/Free/Background",
+    "last.imagePath": "C:/Users/dylon/Downloads/Free/Background",
+    "map.height": 30,
     "map.lastUsedExportFilter": "CSV files (*.csv)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
-    "map.width": 60,
+    "map.width": 50,
     "openFiles": [
         "mapLevel1.tmx",
-        "myTileset.tsx"
+        "myTerrainSet.tsx",
+        "mapLevel1.tmx",
+        "mapLevel1.tmx",
+        "Background.tsx"
     ],
     "project": "levelMap1.tiled-project",
     "recentFiles": [
         "mapLevel1.tmx",
         "myTerrainSet.tsx",
+        "Background.tsx",
         "myTileset.tsx"
     ],
     "tileset.lastUsedFilter": "All Files (*)",
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
-        "height": 16,
-        "width": 16
+        "height": 64,
+        "width": 64
     }
 }

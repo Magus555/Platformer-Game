@@ -3,6 +3,7 @@ from settings import *
 from level import Level
 from UI import Text
 import button
+from sockets import hostServer
 
 pygame.init()
 screen = pygame.display.set_mode((screenWidth,screenHeight))
@@ -13,26 +14,24 @@ exitImg = pygame.image.load('graphics/Menu/Buttons/Levels.png').convert_alpha()
 thirdImg = pygame.image.load('graphics/Menu/Buttons/Settings.png').convert_alpha()
 backImg = pygame.image.load('graphics/Menu/Buttons/Back.png').convert_alpha()
 
-levelButtonImg1 = pygame.image.load('graphics/Menu/Levels/01.png').convert_alpha()
-levelButtonImg2 = pygame.image.load('graphics/Menu/Levels/02.png').convert_alpha()
-levelButtonImg3 = pygame.image.load('graphics/Menu/Levels/03.png').convert_alpha()
-
-lockedLevelButtonImg1 = pygame.image.load('graphics/Menu/Levels/01g.png').convert_alpha()
-lockedLevelButtonImg2 = pygame.image.load('graphics/Menu/Levels/02g.png').convert_alpha()
-lockedLevelButtonImg3 = pygame.image.load('graphics/Menu/Levels/03g.png').convert_alpha()
-
 playButton = button.Button((screenWidth/2), (screenHeight/4), startImg, 5)
 levelSelectButton = button.Button((screenWidth/2), ((screenHeight*2)/4), exitImg, 5)
 settingsButton = button.Button((screenWidth/2), ((screenHeight*3)/4), thirdImg, 5)
 backButton = button.Button((screenWidth*0.9), ((screenHeight*3)/4), backImg, 5)
 
-firstButton = button.Button((screenWidth/4), (screenHeight/3), levelButtonImg1, 5)
-secondButton = button.Button((screenWidth/4*2), (screenHeight/3), levelButtonImg2, 5)
-thirdButton = button.Button((screenWidth/4*3), (screenHeight/3), levelButtonImg3, 5)
+levelButtonImages = []
+for i in range(1,4): levelButtonImages.append(pygame.image.load('graphics/Menu/Levels/0'+str(i)+'.png').convert_alpha())
 
-lockedFirstButton = button.Button((screenWidth/4), (screenHeight/3), lockedLevelButtonImg1, 5)
-lockedSecondButton = button.Button((screenWidth/4*2), (screenHeight/3), lockedLevelButtonImg2, 5)
-lockedThirdButton = button.Button((screenWidth/4*3), (screenHeight/3), lockedLevelButtonImg3, 5)
+lockedLevelButtonImages = []
+for i in range(1,4): lockedLevelButtonImages.append(pygame.image.load('graphics/Menu/Levels/0'+str(i)+'g.png').convert_alpha())
+
+firstButton = button.Button((screenWidth/4), (screenHeight/3), levelButtonImages[0], 5)
+secondButton = button.Button((screenWidth/4*2), (screenHeight/3), levelButtonImages[1], 5)
+thirdButton = button.Button((screenWidth/4*3), (screenHeight/3), levelButtonImages[2], 5)
+
+lockedFirstButton = button.Button((screenWidth/4), (screenHeight/3), lockedLevelButtonImages[0], 5)
+lockedSecondButton = button.Button((screenWidth/4*2), (screenHeight/3), lockedLevelButtonImages[1], 5)
+lockedThirdButton = button.Button((screenWidth/4*3), (screenHeight/3), lockedLevelButtonImages[2], 5)
 
 def saveCheck():
     try:
@@ -60,7 +59,7 @@ def saveUpdate(coinCount,lives,level):
     saveData = open("saveData.txt","wt")
     saveData.writelines(placeHolderList)
     saveData.close()
-    
+
 def menu():
     while True:
         for event in pygame.event.get():
@@ -117,6 +116,16 @@ def levelSelect(level):
 
         pygame.display.update()
         screen.fill('black')
+
+def settings():
+    screen.fill('black')
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            
 
         
 def game(level):
