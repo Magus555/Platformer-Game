@@ -3,6 +3,8 @@ from settings import *
 from level import Level
 from UI import Text
 import button
+import threading
+import os
 from sockets import hostServer
 
 pygame.init()
@@ -32,6 +34,10 @@ thirdButton = button.Button((screenWidth/4*3), (screenHeight/3), levelButtonImag
 lockedFirstButton = button.Button((screenWidth/4), (screenHeight/3), lockedLevelButtonImages[0], 5)
 lockedSecondButton = button.Button((screenWidth/4*2), (screenHeight/3), lockedLevelButtonImages[1], 5)
 lockedThirdButton = button.Button((screenWidth/4*3), (screenHeight/3), lockedLevelButtonImages[2], 5)
+
+resolutionButton = button.textButton((screenWidth/2), (screenHeight/4),"resolution",5,5)
+
+multiplayerButton = button.textButton((screenWidth/4),(screenHeight/2),"Multiplayer",5,5)
 
 def saveCheck():
     try:
@@ -68,18 +74,21 @@ def menu():
                 sys.exit()
 
         if playButton.draw(screen):
-            level = Level((levelMap1),screen)
+            level = Level(1,screen)
+            serverThread = threading.Thread(target=hostServer, name='serverThread')
+            serverThread.start()
             game(level)
             saveUpdate(level.coinCount,level.lives,1)
         if levelSelectButton.draw(screen):
-            level = Level((levelMap1),screen)
-            levelSelect(level)
+            levelSelect()
         if settingsButton.draw(screen):
-            print("third")
+            settings()
+        if multiplayerButton.draw(screen):
+            print("multi")
 
         pygame.display.update()
 
-def levelSelect(level):
+def levelSelect():
     screen.fill('black')
     while True:
         for event in pygame.event.get():
@@ -89,21 +98,21 @@ def levelSelect(level):
 
         if (int(saveCheck()[2])) == 1:
             if firstButton.draw(screen):
-                level = Level((levelMap1),screen)
+                level = Level(1,screen)
                 game(level)
                 saveUpdate(level.coinCount,level.lives,1)
         else:
             lockedFirstButton.draw(screen)
         if (int(saveCheck()[3])) == 1:
             if secondButton.draw(screen):
-                level = Level((levelMap2),screen)
+                level = Level(2,screen)
                 game(level)
                 saveUpdate(level.coinCount,level.lives,2)
         else:
             lockedSecondButton.draw(screen)
         if (int(saveCheck()[4])) == 1:
             if thirdButton.draw(screen):
-                level = Level((levelMap3),screen)
+                level = Level(3,screen)
                 game(level)
                 saveUpdate(level.coinCount,level.lives,0) 
         else:
@@ -125,9 +134,18 @@ def settings():
                 pygame.quit()
                 sys.exit()
 
-            
+        if resolutionButton.draw(screen):
+            print("filler, scaling should be added last so i can add features without worrying about it, less work overall")
 
-        
+
+
+        if backButton.draw(screen):
+            screen.fill('black')
+            break
+
+        pygame.display.update()
+        screen.fill('black')
+    
 def game(level):
     startTicks=pygame.time.get_ticks()
     timeDeath = 0
@@ -146,7 +164,10 @@ def game(level):
             timeDeath = 1
         level.currentClock = seconds
         screen.fill('black')
+
         level.run()
+
+
         screen.blit(Text(("Lives: "+str(level.lives))), (50,50))
         screen.blit(Text(str(timer)),(2400,50))
         screen.blit(Text("Coins: "+str(level.coinCount)),(50,100))

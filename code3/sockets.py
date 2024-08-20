@@ -1,7 +1,7 @@
 import socket
 import asyncio
 
-async def hostServer():
+def hostServer():
 
     s = socket.socket()
     print("Socket successfully created")
@@ -17,7 +17,7 @@ async def hostServer():
     while True: 
  
         # Establish connection with client. 
-        c, addr = await s.accept()     
+        c, addr = s.accept()     
         print ('Got connection from', addr )
 
         # send a thank you message to the client. encoding to send byte type. 

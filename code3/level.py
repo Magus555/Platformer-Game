@@ -4,10 +4,12 @@ from tiles import Tile, backgroundTile, Coin, Flag
 from settings import *
 from player import Player
 from entities import Enemy, Explosion
+import asyncio
 
 class Level:
-    def __init__(self,levelData,surface):
+    def __init__(self,levelNum,surface):
         
+        self.levelNum = levelNum
         self.finishState = False
         self.levelComplete = 0
         self.lives = 0
@@ -38,7 +40,7 @@ class Level:
 
 
 
-        tmx_data = load_pygame('mapLevel1.tmx')
+        tmx_data = load_pygame('mapLevel'+str(self.levelNum)+'.tmx')
         self.tileGroup = pygame.sprite.Group()
         self.enemyGroup = pygame.sprite.Group()
         self.coinGroup = pygame.sprite.Group()
@@ -266,7 +268,6 @@ class Level:
         
 
         self.player.update(self.playerHealth)
-        
 
         self.backgroundScrolling()
        

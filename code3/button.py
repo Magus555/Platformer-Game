@@ -25,12 +25,12 @@ class Button():
         return function
 
 class textButton():
-    def __init__(self, x, y, text, scaleX, scaleY, textScaleX, textScaleY):
+    def __init__(self, x, y, text, textScaleX, textScaleY):
         i=0
         image = pygame.image.load('graphics/buttons/reusable.png')
-        width = image.get_width()
         height = image.get_height()
-        image = pygame.transform.scale(image, (int(width * scaleX), int(height * scaleY)))
+        
+        image = pygame.transform.scale(image, (len(text)*8*textScaleX + len(text)*8*textScaleX/2.5, int(height*textScaleY)))
         textImage = pygame.image.load('graphics/Menu/Text/Text (White) (8x10).png')
         self.buttonSurface = pygame.Surface((image.get_width(),image.get_height()))
         self.buttonSurface.blit(image,(0,0))
@@ -53,7 +53,7 @@ class textButton():
 
 
         self.rect = self.buttonSurface.get_rect()
-        self.rect.topleft = (x, y)
+        self.rect.center = (x, y)
         self.clicked = False
 
     def draw(self, surface):
