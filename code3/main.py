@@ -5,7 +5,7 @@ from UI import Text
 import button
 import threading
 import os
-from sockets import hostServer
+
 
 pygame.init()
 screen = pygame.display.set_mode((screenWidth,screenHeight))
@@ -37,7 +37,8 @@ lockedThirdButton = button.Button((screenWidth/4*3), (screenHeight/3), lockedLev
 
 resolutionButton = button.textButton((screenWidth/2), (screenHeight/4),"resolution",5,5)
 
-multiplayerButton = button.textButton((screenWidth/4),(screenHeight/2),"Multiplayer",5,5)
+hostButton = button.textButton((screenWidth/4),(screenHeight/4),"Host Multiplayer",5,5)
+clientButton = button.textButton((screenWidth/4),(screenHeight/3),"Join Multiplayer",5,5)
 
 def saveCheck():
     try:
@@ -75,17 +76,22 @@ def menu():
 
         if playButton.draw(screen):
             level = Level(1,screen)
-            serverThread = threading.Thread(target=hostServer, name='serverThread')
-            serverThread.start()
             game(level)
             saveUpdate(level.coinCount,level.lives,1)
         if levelSelectButton.draw(screen):
             levelSelect()
         if settingsButton.draw(screen):
             settings()
-        if multiplayerButton.draw(screen):
-            print("multi")
-
+        if hostButton.draw(screen):
+            level = Level(1,screen)
+            level.levelServer()
+            game(level)
+            saveUpdate(level.coinCount,level.lives,1)
+        if clientButton.draw(screen):
+            level = Level(1,screen)
+            level.clientJoinServer()
+            game(level)
+            saveUpdate(level.coinCount,level.lives,1)
         pygame.display.update()
 
 def levelSelect():

@@ -4,11 +4,16 @@ from tiles import Tile, backgroundTile, Coin, Flag
 from settings import *
 from player import Player
 from entities import Enemy, Explosion
-import asyncio
+import threading
+from queue import Queue
+from server import startServer
+from client import *
+import time
 
 class Level:
     def __init__(self,levelNum,surface):
         
+        self.multiplayer = False
         self.levelNum = levelNum
         self.finishState = False
         self.levelComplete = 0
@@ -33,7 +38,7 @@ class Level:
         self.scroll_x = 0
         self.scroll_y = 0
         self.background_y = screenHeight
-
+        
     def setupLevel(self):
 
         self.levelSize = [0,0]
@@ -45,6 +50,7 @@ class Level:
         self.enemyGroup = pygame.sprite.Group()
         self.coinGroup = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
+        self.otherPlayer = pygame.sprite.GroupSingle()
         self.flag = pygame.sprite.GroupSingle()
         self.explosionGroup = pygame.sprite.GroupSingle()
 
@@ -73,6 +79,8 @@ class Level:
             pos = obj.x*4 + 2000,obj.y*3
             self.spawnPosition=(pos[0],pos[1])
             self.player.add(Player(pos))
+            if(self.multiplayer==True):
+                self.otherPlayer.add(Player(pos[0],pos[1]-200))
         for obj in tmx_data.get_layer_by_name('Enemy'):
             pos = obj.x*4 + 2000,obj.y*3
             Enemy(pos,64,groups=self.enemyGroup)
@@ -82,6 +90,31 @@ class Level:
         for obj in tmx_data.get_layer_by_name('Flag'):
             pos = obj.x*4 + 2000,obj.y*3
             Flag(pos,64,groups=self.flag)
+
+    def levelServer(self):
+        self.multiplayer = True
+        self.playerNum = 1
+        self.q = Queue()
+        print("now hosting")
+        serverThread = threading.Thread(target=startServer, name='serverThread',args = (self.q, ))
+        serverThread.start()
+
+
+
+    def clientJoinServer(self):
+        self.multiplayer = True
+        self.playerNum = 2
+        self.q = Queue()
+        print("now joining")
+        self.clientNetwork = Network()
+        self.clientThread = threading.Thread(target=self.sendAndReceiveCoordinates, name='clientThread')
+        self.clientThread.start()
+
+
+
+    def otherPlayerSetPosition(self,x,y):
+        self.otherPlayer.sprite.rect.center = (x,y)
+
 
     def backgroundScrolling(self):
         self.scroll_y += 1
@@ -235,11 +268,19 @@ class Level:
         if flagCollisions:
             self.finishState = True
 
+
+    def sendAndReceiveCoordinates(self):
+        while(True):
+            if (self.multiplayer == True and self.playerNum == 2):
+                self.clientNetwork.connect()
+                time.sleep(1)
+
+
     def run(self):
   
         self.levelSurface.fill('black')
+            
 
-        
 
         self.fallOutOfBounds()
 
@@ -268,6 +309,7 @@ class Level:
         
 
         self.player.update(self.playerHealth)
+        self.otherPlayer.update(self.playerHealth)
 
         self.backgroundScrolling()
        
@@ -277,6 +319,7 @@ class Level:
         self.coinGroup.draw(self.levelSurface)
         self.flag.draw(self.levelSurface)
         self.player.draw(self.levelSurface)
+        self.otherPlayer.draw(self.levelSurface)
         
         self.displaySurface.blit(self.levelSurface,(0,0),area=(self.player.sprite.rect.topleft[0]-(screenWidth/2),0,screenWidth,screenHeight))
 
