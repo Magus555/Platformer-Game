@@ -23,7 +23,7 @@ def threaded_client(conn):
         try:
             data = conn.recv(2048)
             reply = data.decode("utf-8")
-
+            
             if not data:
                 print("Disconnected")
                 break

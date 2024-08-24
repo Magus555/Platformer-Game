@@ -275,6 +275,16 @@ class Level:
                 self.clientNetwork.connect()
                 time.sleep(1)
 
+##        if self.multiplayer == True:
+ #           if(self.q.empty() == False):
+  #              string = self.q.get()
+   #             print(string)
+    #            if((string.split('(')[0]=='Player2' and self.playerNum == 1) or (string.split('(')[0]=='Player1' and self.playerNum == 2)):
+     #               x,y=(string.split('(')[1].split(')'))[0][0],(string.split('(')[1].split(')'))[0][2]
+      #              self.otherPlayerSetPosition(x,y)
+       #             print("THIS TRIGGERED")
+
+            self.q.put('Player'+str(self.playerNum)+'('+str(self.player.sprite.rect.x)+','+str(self.player.sprite.rect.y)+')')
 
     def run(self):
   
