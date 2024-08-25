@@ -6,7 +6,7 @@ from player import Player
 from entities import Enemy, Explosion
 import threading
 from queue import Queue
-from server import startServer
+from server import Server
 from client import *
 import time
 
@@ -96,7 +96,8 @@ class Level:
         self.playerNum = 1
         self.q = Queue()
         print("now hosting")
-        serverThread = threading.Thread(target=startServer, name='serverThread',args = (self.q, ))
+        self.hostServer = Server()
+        serverThread = threading.Thread(target=self.hostServer.startServer, name='serverThread',args = (self.player.sprite, ))
         serverThread.start()
 
 
@@ -287,6 +288,15 @@ class Level:
 
             self.q.put('Player'+str(self.playerNum)+'('+str(self.player.sprite.rect.x)+','+str(self.player.sprite.rect.y)+')')
 
+    def sendPlayerLocation(self):
+        while True:
+            if self.playerNum==1:
+                self.hostServer.serverSend(self.player.sprite.getPos())
+                time.sleep(1)
+            else:
+                self.clientNetwork.send(self.player.sprite.getPos())
+                time.sleep(1)
+
     def run(self):
   
         self.levelSurface.fill('black')
@@ -316,7 +326,6 @@ class Level:
 
         self.flag.update()
         
-        self.q.put(self.player.sprite.getPos())
         self.player.update(self.playerHealth)
         self.otherPlayer.update(self.playerHealth)
 
