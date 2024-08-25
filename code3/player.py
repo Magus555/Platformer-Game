@@ -77,7 +77,8 @@ class Player(pygame.sprite.Sprite):
             self.image = self.getImage(self.fallFrames,0)
 
 
-
+    def getPos(self):
+        return (self.rect.x,self.rect.y)
 
 
     def applyGravity(self):

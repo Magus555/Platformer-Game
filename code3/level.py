@@ -96,7 +96,7 @@ class Level:
         self.playerNum = 1
         self.q = Queue()
         print("now hosting")
-        serverThread = threading.Thread(target=startServer, name='serverThread',args = ())
+        serverThread = threading.Thread(target=startServer, name='serverThread',args = (self.q, ))
         serverThread.start()
 
 
@@ -313,11 +313,10 @@ class Level:
         
         
         self.coinGroup.update
-        
 
         self.flag.update()
         
-
+        self.q.put(self.player.sprite.getPos())
         self.player.update(self.playerHealth)
         self.otherPlayer.update(self.playerHealth)
 
