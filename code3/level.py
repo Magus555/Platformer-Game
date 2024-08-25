@@ -96,7 +96,7 @@ class Level:
         self.playerNum = 1
         self.q = Queue()
         print("now hosting")
-        serverThread = threading.Thread(target=startServer, name='serverThread',args = (self.q, ))
+        serverThread = threading.Thread(target=startServer, name='serverThread',args = ())
         serverThread.start()
 
 

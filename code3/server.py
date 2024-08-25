@@ -1,8 +1,9 @@
 import socket
 from _thread import *
-import sys
+import FindMyIP as ip
 
-server = "127.0.0.1"
+server = ip.internal()
+print("Hosting at "+str(ip.internal()+"."))
 port = 12348
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -18,7 +19,7 @@ print("Waiting for a connection, Server Started")
 
 def threaded_client(conn):
     conn.send(str.encode("Connected"))
-    reply = ""
+    reply = "this is a message!"
     while True:
         try:
             data = conn.recv(2048)
@@ -41,6 +42,7 @@ def threaded_client(conn):
 def startServer():
     while True:
         conn, addr = s.accept()
+        print("hi")
         print("Connected to:", addr)
 
         threaded_client, (conn,)
