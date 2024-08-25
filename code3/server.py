@@ -5,6 +5,7 @@ import FindMyIP as ip
 import pygame
 
 
+
 def threaded_client(conn, q):
     clock = pygame.time.Clock()
     clock.tick(60)
@@ -35,6 +36,7 @@ def threaded_client(conn, q):
 
 
 def startServer(q):
+
     server = ip.internal()
     print("Hosting at "+str(ip.internal()+"."))
     port = 12348
@@ -48,7 +50,6 @@ def startServer(q):
 
     s.listen(2)
     print("Waiting for a connection, Server Started")
-
     while True:
         conn, addr = s.accept()
         print("hi")

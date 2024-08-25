@@ -107,8 +107,9 @@ class Level:
         self.q = Queue()
         print("now joining")
         self.clientNetwork = Network()
-        self.clientThread = threading.Thread(target=self.sendAndReceiveCoordinates, name='clientThread')
-        self.clientThread.start()
+        clientThread = threading.Thread(target=self.clientNetwork.connect, name='clientThread',args=(self.player.sprite, ))
+        clientThread.start()
+        self.clientNetwork.send('this is a big fat message')
 
 
 
@@ -304,7 +305,6 @@ class Level:
         self.playerFlagCollisionCheck()
 
         self.tileGroup.update()
-        
 
         self.enemyGroup.update()
         
