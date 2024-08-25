@@ -272,7 +272,7 @@ class Level:
     def sendAndReceiveCoordinates(self):
         while(True):
             if (self.multiplayer == True and self.playerNum == 2):
-                self.clientNetwork.connect()
+                print(self.clientNetwork.connect())
                 time.sleep(1)
 
 ##        if self.multiplayer == True:

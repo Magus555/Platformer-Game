@@ -11,11 +11,12 @@ class Network:
         print(self.id)
 
     def connect(self):
-        try:
+        while True:
             self.client.connect(self.addr)
-            return self.client.recv(2048).decode()
-        except:
-            pass
+            try:
+                return self.client.recv(2048).decode()
+            except:
+                pass
 
     def send(self, data):
         try:

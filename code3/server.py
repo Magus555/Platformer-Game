@@ -19,7 +19,7 @@ print("Waiting for a connection, Server Started")
 
 def threaded_client(conn):
     conn.send(str.encode("Connected"))
-    reply = "this is a message!"
+    reply = "this is a message! "
     while True:
         try:
             data = conn.recv(2048)
@@ -29,7 +29,7 @@ def threaded_client(conn):
                 print("Disconnected")
                 break
             else:
-                print("Received: ", reply)
+                print("Received: ", data)
                 print("Sending : ", reply)
 
             conn.sendall(str.encode(reply))
