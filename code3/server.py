@@ -7,16 +7,16 @@ class Server:
     def __init__(self):
         server = ip.internal()
         print("Hosting at "+str(ip.internal()+"."))
-        port = 12348
+        self.port = 12348
 
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.setblocking(False)
 
         try:
-            self.s.bind((server, port))
+            self.sock.bind((server, self.port))
         except socket.error as e:
             str(e)
 
-        self.s.listen(2)
         print("Waiting for a connection, Server Started")
 
         self.playerPos = 0
@@ -24,26 +24,38 @@ class Server:
 
 
     def threaded_client(self, player, otherPlayer):
-        self.conn.send("Connected".encode("utf-8"))
         reply = "this is my message! "
         while True:
             try:
-                data = self.conn.recv(2048).decode("utf-8")
+                data,address = self.sock.recvfrom(2048)
+                print(data)
+                break
+            except:
+                pass
+
+        while True:
+            try:
+                try:
+                    data = self.sock.recv(2048)
+                except:
+                    data = ""
+
                 if not data:
-                    print("Disconnected")
-                    break
+                    pass
                 else:
+                    data=data.decode('utf-8')
                     print("Received: ", data)
-                    x=data.split('(')[1].split(',')[0]
-                    y=data.split(')')[0].split(',')[1]
-                    otherPlayer.setPos(x,y)
-                    print(player.getPos(),self.playerPos)
-                    self.playerPos = player.getPos()
-                    print(self.playerPos,self.lastPlayerPos)
-                    if(self.playerPos!=self.lastPlayerPos):
-                        print("triggered")
-                        self.lastPlayerPos=self.playerPos
-                        self.conn.sendall(str(self.playerPos).encode("utf-8"))
+                    if(len(data.split('('))>1):
+                        x=data.split('(')[1].split(',')[0]
+                        y=data.split(')')[0].split(',')[1]
+                        otherPlayer.setPos(x,y)
+
+                self.playerPos = player.getPos()
+                if(self.playerPos!=self.lastPlayerPos):
+                    print("triggered")
+                    self.lastPlayerPos=self.playerPos
+                    self.sock.sendto(str(self.playerPos).encode("utf-8"), address)
+
                         
 
 
@@ -54,7 +66,7 @@ class Server:
                 break
 
         print("Lost connection")
-        self.conn.close()
+        self.sock.close()
 
   
 
@@ -62,9 +74,7 @@ class Server:
 
 
         while True:
-            self.conn, addr = self.s.accept()
-            print("hi")
-            print("Connected to:", addr)
+
 
             self.threaded_client(player,otherPlayer)
 

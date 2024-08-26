@@ -96,7 +96,7 @@ class Level:
         print("now hosting")
         self.hostServer = Server()
         if(self.multiplayer==True):
-            self.otherPlayer.add(Player((self.player.sprite.rect.x,self.player.sprite.rect.y)))
+            self.otherPlayer.add(Player(self.player.sprite.getPos()))
         serverThread = threading.Thread(target=self.hostServer.startServer, name='serverThread',args = (self.player.sprite, self.otherPlayer.sprite, ))
         serverThread.start()
 
