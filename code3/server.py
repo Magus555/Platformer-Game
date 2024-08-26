@@ -31,7 +31,9 @@ class Server:
                 print(data)
                 break
             except:
+                time.sleep(5)
                 pass
+
 
         while True:
             try:
@@ -55,6 +57,7 @@ class Server:
                     print("triggered")
                     self.lastPlayerPos=self.playerPos
                     self.sock.sendto(str(self.playerPos).encode("utf-8"), address)
+                    time.sleep(0.01)
 
                         
 

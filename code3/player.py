@@ -53,36 +53,46 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_d]:
             self.direction.x = 1
             self.flipped = 1
-            if self.frameIndex > 11 : self.frameIndex = 0
-            self.image = self.getImage(self.runFrames,self.frameIndex)
         elif keys[pygame.K_a]:
             self.direction.x = -1
             self.flipped = 0
-            if self.frameIndex > 11 : self.frameIndex = 0
-            self.image = self.getImage(self.runFrames,self.frameIndex)
         else:
             self.direction.x = 0
-            if self.frameIndex > 10 : self.frameIndex = 0
-            self.image = self.getImage(self.idleFrames,self.frameIndex)
 
         if keys[pygame.K_w] and self.onGround:
             self.jump()
             self.onGround = False
             
+
+    def animate(self):
         if self.direction.y < 0:
             self.image = self.getImage(self.jumpFrame,0)
-        
+
         elif self.onGround == False:
             self.image = self.fallFrames
             self.image = self.getImage(self.fallFrames,0)
+
+        elif self.direction.x!=0:
+            if self.frameIndex > 11 : self.frameIndex = 0
+            self.image = self.getImage(self.runFrames,self.frameIndex)
+        
+        else:
+            self.direction.x = 0
+            if self.frameIndex > 10 : self.frameIndex = 0
+            self.image = self.getImage(self.idleFrames,self.frameIndex)
 
 
     def getPos(self):
         return (self.rect.x,self.rect.y)
     
     def setPos(self,x,y):
-        self.rect.x = int(x)
-        self.rect.y = int(y)
+        x=int(x)
+        y=int(y)
+        if(self.rect.x<x): self.direction.x=1
+        if(self.rect.x>x): self.direction.x=-1
+        if(self.rect.x==x): self.direction.x=0
+        self.rect.x = x
+        self.rect.y = y
 
 
     def applyGravity(self):
@@ -101,6 +111,12 @@ class Player(pygame.sprite.Sprite):
     def update(self,playerHealth):
         self.frameIncrementer()
         self.getInput()
+        self.animate()
+        self.imageFlipped(playerHealth)
+
+    def otherPlayerUpdate(self,playerHealth):
+        self.frameIncrementer()
+        self.animate()
         self.imageFlipped(playerHealth)
 
         

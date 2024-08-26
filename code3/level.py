@@ -12,7 +12,8 @@ import time
 
 class Level:
     def __init__(self,levelNum,surface):
-        
+
+        self.multiplayer = False
         self.levelNum = levelNum
         self.finishState = False
         self.levelComplete = 0
@@ -95,8 +96,7 @@ class Level:
         self.q = Queue()
         print("now hosting")
         self.hostServer = Server()
-        if(self.multiplayer==True):
-            self.otherPlayer.add(Player(self.player.sprite.getPos()))
+        self.otherPlayer.add(Player(self.player.sprite.getPos()))
         serverThread = threading.Thread(target=self.hostServer.startServer, name='serverThread',args = (self.player.sprite, self.otherPlayer.sprite, ))
         serverThread.start()
 
@@ -326,7 +326,8 @@ class Level:
         self.flag.update()
         
         self.player.update(self.playerHealth)
-        self.otherPlayer.update(self.playerHealth)
+        if(self.multiplayer==True):
+            self.otherPlayer.sprite.otherPlayerUpdate(self.playerHealth)
 
         self.backgroundScrolling()
        
