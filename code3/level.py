@@ -13,7 +13,6 @@ import time
 class Level:
     def __init__(self,levelNum,surface):
         
-        self.multiplayer = False
         self.levelNum = levelNum
         self.finishState = False
         self.levelComplete = 0
@@ -79,8 +78,7 @@ class Level:
             pos = obj.x*4 + 2000,obj.y*3
             self.spawnPosition=(pos[0],pos[1])
             self.player.add(Player(pos))
-            if(self.multiplayer==True):
-                self.otherPlayer.add(Player(pos[0],pos[1]-200))
+                
         for obj in tmx_data.get_layer_by_name('Enemy'):
             pos = obj.x*4 + 2000,obj.y*3
             Enemy(pos,64,groups=self.enemyGroup)
@@ -97,7 +95,9 @@ class Level:
         self.q = Queue()
         print("now hosting")
         self.hostServer = Server()
-        serverThread = threading.Thread(target=self.hostServer.startServer, name='serverThread',args = (self.player.sprite, ))
+        if(self.multiplayer==True):
+            self.otherPlayer.add(Player((self.player.sprite.rect.x,self.player.sprite.rect.y)))
+        serverThread = threading.Thread(target=self.hostServer.startServer, name='serverThread',args = (self.player.sprite, self.otherPlayer.sprite, ))
         serverThread.start()
 
 
@@ -320,7 +320,6 @@ class Level:
         
         
         self.explosionGroup.update()
-        
         
         self.coinGroup.update
 

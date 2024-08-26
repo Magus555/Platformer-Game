@@ -79,6 +79,10 @@ class Player(pygame.sprite.Sprite):
 
     def getPos(self):
         return (self.rect.x,self.rect.y)
+    
+    def setPos(self,x,y):
+        self.rect.x = int(x)
+        self.rect.y = int(y)
 
 
     def applyGravity(self):

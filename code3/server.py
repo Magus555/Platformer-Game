@@ -19,8 +19,11 @@ class Server:
         self.s.listen(2)
         print("Waiting for a connection, Server Started")
 
+        self.playerPos = 0
+        self.lastPlayerPos = 0
 
-    def threaded_client(self, player):
+
+    def threaded_client(self, player, otherPlayer):
         self.conn.send("Connected".encode("utf-8"))
         reply = "this is my message! "
         while True:
@@ -31,8 +34,19 @@ class Server:
                     break
                 else:
                     print("Received: ", data)
-                    self.conn.sendall(str(player.getPos()).encode("utf-8"))
-                    time.sleep(0.1)
+                    x=data.split('(')[1].split(',')[0]
+                    y=data.split(')')[0].split(',')[1]
+                    otherPlayer.setPos(x,y)
+                    print(player.getPos(),self.playerPos)
+                    self.playerPos = player.getPos()
+                    print(self.playerPos,self.lastPlayerPos)
+                    if(self.playerPos!=self.lastPlayerPos):
+                        print("triggered")
+                        self.lastPlayerPos=self.playerPos
+                        self.conn.sendall(str(self.playerPos).encode("utf-8"))
+                        
+
+
 
 
 
@@ -44,7 +58,7 @@ class Server:
 
   
 
-    def startServer(self,player):
+    def startServer(self,player,otherPlayer):
 
 
         while True:
@@ -52,6 +66,6 @@ class Server:
             print("hi")
             print("Connected to:", addr)
 
-            self.threaded_client(player)
+            self.threaded_client(player,otherPlayer)
 
 
