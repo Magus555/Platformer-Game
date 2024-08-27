@@ -4,11 +4,16 @@ from tiles import Tile, backgroundTile, Coin, Flag
 from settings import *
 from player import Player
 from entities import Enemy, Explosion
-import asyncio
+import threading
+from queue import Queue
+from server import Server
+from client import *
+import time
 
 class Level:
     def __init__(self,levelNum,surface):
-        
+
+        self.multiplayer = False
         self.levelNum = levelNum
         self.finishState = False
         self.levelComplete = 0
@@ -33,7 +38,7 @@ class Level:
         self.scroll_x = 0
         self.scroll_y = 0
         self.background_y = screenHeight
-
+        
     def setupLevel(self):
 
         self.levelSize = [0,0]
@@ -45,6 +50,7 @@ class Level:
         self.enemyGroup = pygame.sprite.Group()
         self.coinGroup = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
+        self.otherPlayer = pygame.sprite.GroupSingle()
         self.flag = pygame.sprite.GroupSingle()
         self.explosionGroup = pygame.sprite.GroupSingle()
 
@@ -73,6 +79,7 @@ class Level:
             pos = obj.x*4 + 2000,obj.y*3
             self.spawnPosition=(pos[0],pos[1])
             self.player.add(Player(pos))
+                
         for obj in tmx_data.get_layer_by_name('Enemy'):
             pos = obj.x*4 + 2000,obj.y*3
             Enemy(pos,64,groups=self.enemyGroup)
@@ -82,6 +89,34 @@ class Level:
         for obj in tmx_data.get_layer_by_name('Flag'):
             pos = obj.x*4 + 2000,obj.y*3
             Flag(pos,64,groups=self.flag)
+
+    def levelServer(self):
+        self.multiplayer = True
+        self.playerNum = 1
+        self.q = Queue()
+        print("now hosting")
+        self.hostServer = Server()
+        self.otherPlayer.add(Player(self.player.sprite.getPos()))
+        serverThread = threading.Thread(target=self.hostServer.startServer, name='serverThread',args = (self.player.sprite, self.otherPlayer.sprite, ))
+        serverThread.start()
+
+
+
+    def clientJoinServer(self):
+        self.multiplayer = True
+        self.playerNum = 2
+        self.q = Queue()
+        print("now joining")
+        self.clientNetwork = Network()
+        clientThread = threading.Thread(target=self.clientNetwork.connect, name='clientThread',args=(self.player.sprite, ))
+        clientThread.start()
+        self.clientNetwork.send('this is a big fat message')
+
+
+
+    def otherPlayerSetPosition(self,x,y):
+        self.otherPlayer.sprite.rect.center = (x,y)
+
 
     def backgroundScrolling(self):
         self.scroll_y += 1
@@ -235,11 +270,38 @@ class Level:
         if flagCollisions:
             self.finishState = True
 
+
+    def sendAndReceiveCoordinates(self):
+        while(True):
+            if (self.multiplayer == True and self.playerNum == 2):
+                print(self.clientNetwork.connect())
+                time.sleep(1)
+
+##        if self.multiplayer == True:
+ #           if(self.q.empty() == False):
+  #              string = self.q.get()
+   #             print(string)
+    #            if((string.split('(')[0]=='Player2' and self.playerNum == 1) or (string.split('(')[0]=='Player1' and self.playerNum == 2)):
+     #               x,y=(string.split('(')[1].split(')'))[0][0],(string.split('(')[1].split(')'))[0][2]
+      #              self.otherPlayerSetPosition(x,y)
+       #             print("THIS TRIGGERED")
+
+            self.q.put('Player'+str(self.playerNum)+'('+str(self.player.sprite.rect.x)+','+str(self.player.sprite.rect.y)+')')
+
+    def sendPlayerLocation(self):
+        while True:
+            if self.playerNum==1:
+                self.hostServer.serverSend(self.player.sprite.getPos())
+                time.sleep(1)
+            else:
+                self.clientNetwork.send(self.player.sprite.getPos())
+                time.sleep(1)
+
     def run(self):
   
         self.levelSurface.fill('black')
+            
 
-        
 
         self.fallOutOfBounds()
 
@@ -253,21 +315,19 @@ class Level:
         self.playerFlagCollisionCheck()
 
         self.tileGroup.update()
-        
 
         self.enemyGroup.update()
         
         
         self.explosionGroup.update()
         
-        
         self.coinGroup.update
-        
 
         self.flag.update()
         
-
         self.player.update(self.playerHealth)
+        if(self.multiplayer==True):
+            self.otherPlayer.sprite.otherPlayerUpdate(self.playerHealth)
 
         self.backgroundScrolling()
        
@@ -277,6 +337,7 @@ class Level:
         self.coinGroup.draw(self.levelSurface)
         self.flag.draw(self.levelSurface)
         self.player.draw(self.levelSurface)
+        self.otherPlayer.draw(self.levelSurface)
         
         self.displaySurface.blit(self.levelSurface,(0,0),area=(self.player.sprite.rect.topleft[0]-(screenWidth/2),0,screenWidth,screenHeight))
 
