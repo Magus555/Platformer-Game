@@ -68,14 +68,14 @@ class Player(pygame.sprite.Sprite):
         if self.direction.y < 0:
             self.image = self.getImage(self.jumpFrame,0)
 
-        elif self.onGround == False:
+        elif self.onGround == False and self.direction.y!=0:
             self.image = self.fallFrames
             self.image = self.getImage(self.fallFrames,0)
 
         elif self.direction.x!=0:
             if self.frameIndex > 11 : self.frameIndex = 0
             self.image = self.getImage(self.runFrames,self.frameIndex)
-        
+      
         else:
             self.direction.x = 0
             if self.frameIndex > 10 : self.frameIndex = 0
@@ -88,11 +88,19 @@ class Player(pygame.sprite.Sprite):
     def setPos(self,x,y):
         x=int(x)
         y=int(y)
-        if(self.rect.x<x): self.direction.x=1
-        if(self.rect.x>x): self.direction.x=-1
-        if(self.rect.x==x): self.direction.x=0
+        if(self.rect.x<x):
+            self.direction.x=1
+            self.flipped=1
+        if(self.rect.x>x):
+            self.direction.x=-1
+            self.flipped=0
+        if(self.rect.y>y): self.direction.y=-1
+        if(self.rect.y<y): self.direction.y=1
+        if(self.rect.y==y): self.direction.y=0
+
         self.rect.x = x
         self.rect.y = y
+
 
 
     def applyGravity(self):
@@ -118,5 +126,7 @@ class Player(pygame.sprite.Sprite):
         self.frameIncrementer()
         self.animate()
         self.imageFlipped(playerHealth)
+        self.direction.x=0
+        self.direction.y=0
 
         
