@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="23">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="43">
  <tileset firstgid="1" source="myTerrainSet.tsx"/>
  <layer id="1" name="Tile Layer 1" width="60" height="20">
   <data encoding="csv">
@@ -25,12 +25,12 @@
 51,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,53
 </data>
  </layer>
- <objectgroup id="2" name="Player">
+ <objectgroup id="2" name="Player" visible="0">
   <object id="11" x="8.45393" y="197.822">
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="4" name="Coin">
+ <objectgroup id="4" name="Coin" visible="0">
   <object id="17" x="328.012" y="168.515">
    <point/>
   </object>
@@ -41,22 +41,25 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="5" name="Flag">
+ <objectgroup id="5" name="Flag" visible="0">
   <object id="22" x="903.443" y="216.984">
    <point/>
   </object>
  </objectgroup>
  <objectgroup id="3" name="Enemy">
-  <object id="12" x="338.721" y="213.603">
+  <object id="37" x="279" y="201">
    <point/>
   </object>
-  <object id="13" x="559.087" y="209.094">
+  <object id="38" x="329.5" y="197">
    <point/>
   </object>
-  <object id="14" x="794.106" y="213.603">
+  <object id="39" x="541" y="198">
    <point/>
   </object>
-  <object id="21" x="214.166" y="162.879">
+  <object id="41" x="793" y="192">
+   <point/>
+  </object>
+  <object id="42" x="164" y="211">
    <point/>
   </object>
  </objectgroup>

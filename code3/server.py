@@ -23,12 +23,13 @@ class Server:
         self.lastPlayerPos = 0
 
 
-    def threaded_client(self, player, otherPlayer):
+    def threaded_client(self, player, otherPlayer,connected):
         reply = "this is my message! "
         while True:
             try:
                 data,address = self.sock.recvfrom(2048)
                 print(data)
+                connected.put(True)
                 break
             except:
                 time.sleep(5)
@@ -73,12 +74,12 @@ class Server:
 
   
 
-    def startServer(self,player,otherPlayer):
+    def startServer(self,player,otherPlayer,connected):
 
 
         while True:
 
 
-            self.threaded_client(player,otherPlayer)
+            self.threaded_client(player,otherPlayer,connected)
 
 

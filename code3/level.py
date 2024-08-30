@@ -10,9 +10,12 @@ from server import Server
 from client import *
 import time
 
+
 class Level:
     def __init__(self,levelNum,surface):
 
+        self.screenWidth = pygame.display.Info().current_w
+        self.screenHeight = pygame.display.Info().current_h
         self.multiplayer = False
         self.levelNum = levelNum
         self.finishState = False
@@ -20,7 +23,7 @@ class Level:
         self.lives = 0
         self.score = 0
         self.displaySurface = surface
-        self.backgroundSurface = pygame.Surface((screenWidth+1000,screenHeight))
+        self.backgroundSurface = pygame.Surface((self.screenWidth+1000,self.screenHeight))
         self.setupLevel()
         self.levelSurface = pygame.Surface((self.levelSize[0]+5000,self.levelSize[1]+1000))
 
@@ -37,7 +40,7 @@ class Level:
 
         self.scroll_x = 0
         self.scroll_y = 0
-        self.background_y = screenHeight
+        self.background_y = self.screenHeight
         
     def setupLevel(self):
 
@@ -59,8 +62,8 @@ class Level:
         for y in range(0,9):
             for x in range(0,17):
                 image = pygame.image.load("graphics/Background/Brown.png").convert_alpha()
-                image = pygame.transform.scale(image,(screenWidth/16,screenHeight/8))
-                self.backgroundSurface.blit(image, (screenWidth/16 * x,screenHeight/8 * y), area=None)
+                image = pygame.transform.scale(image,(self.screenWidth/16,self.screenHeight/8))
+                self.backgroundSurface.blit(image, (self.screenWidth/16 * x,self.screenHeight/8 * y), area=None)
 
         # cycle through all layers
         for layer in tmx_data.visible_layers:
@@ -90,25 +93,25 @@ class Level:
             pos = obj.x*4 + 2000,obj.y*3
             Flag(pos,64,groups=self.flag)
 
-    def levelServer(self):
+    def levelServer(self,connected):
         self.multiplayer = True
         self.playerNum = 1
         self.q = Queue()
         print("now hosting")
         self.hostServer = Server()
         self.otherPlayer.add(Player(self.player.sprite.getPos()))
-        serverThread = threading.Thread(target=self.hostServer.startServer, name='serverThread',args = (self.player.sprite, self.otherPlayer.sprite, ))
+        serverThread = threading.Thread(target=self.hostServer.startServer, name='serverThread',args = (self.player.sprite, self.otherPlayer.sprite, connected, ))
         serverThread.start()
 
 
 
-    def clientJoinServer(self):
+    def clientJoinServer(self,connected):
         self.multiplayer = True
         self.playerNum = 2
         self.q = Queue()
         print("now joining")
         self.clientNetwork = Network()
-        clientThread = threading.Thread(target=self.clientNetwork.connect, name='clientThread',args=(self.player.sprite, ))
+        clientThread = threading.Thread(target=self.clientNetwork.connect, name='clientThread',args=(self.player.sprite, connected, ))
         clientThread.start()
         self.clientNetwork.send('this is a big fat message')
 
@@ -122,14 +125,14 @@ class Level:
         self.scroll_y += 1
         self.background_y += 1
 
-        self.levelSurface.blit(self.backgroundSurface, (self.player.sprite.rect.topleft[0]-(screenWidth/2), self.scroll_y))
-        self.levelSurface.blit(self.backgroundSurface, (self.player.sprite.rect.topleft[0]-(screenWidth/2), self.background_y))
+        self.levelSurface.blit(self.backgroundSurface, (self.player.sprite.rect.topleft[0]-(self.screenWidth/2), self.scroll_y))
+        self.levelSurface.blit(self.backgroundSurface, (self.player.sprite.rect.topleft[0]-(self.screenWidth/2), self.background_y))
 
-        if self.scroll_y >= screenHeight:
-            self.scroll_y = -screenHeight+1
+        if self.scroll_y >= self.screenHeight:
+            self.scroll_y = -self.screenHeight+1
 
-        if self.background_y >= screenHeight:
-            self.background_y = -screenHeight+1
+        if self.background_y >= self.screenHeight:
+            self.background_y = -self.screenHeight+1
 
 
  
@@ -140,11 +143,11 @@ class Level:
         playerX = player.rect.centerx
         directionX = player.direction.x
 
-        if playerX < screenWidth / 4 and directionX < 0:
+        if playerX < self.screenWidth / 4 and directionX < 0:
             self.worldShift = 8
             player.speed = 0
             self.spawnDistance += 8
-        elif playerX > screenWidth - (screenWidth / 4) and directionX > 0:
+        elif playerX > self.screenWidth - (self.screenWidth / 4) and directionX > 0:
             self.worldShift = -8
             player.speed = 0
             self.spawnDistance -= 8
@@ -158,21 +161,20 @@ class Level:
 
 
     
-    def respawn(self):
-        self.player.sprite.rect.x=self.spawnPosition[0]
-        self.player.sprite.rect.y=self.spawnPosition[1]
+    def respawn(self,player):
+        player.rect.x=self.spawnPosition[0]
+        player.rect.y=self.spawnPosition[1]
         self.lives = self.lives-1
         self.worldShift=-self.spawnDistance
         self.spawnDistance=0
         self.playerHealth = 2
 
-    def fallOutOfBounds(self):
-        playerY = self.player.sprite.rect.centery
-        if playerY > screenHeight:
-            self.respawn()
+    def fallOutOfBounds(self,player):
+        playerY = player.rect.centery
+        if playerY > self.screenHeight:
+            self.respawn(player)
 
-    def horizontalMovementCollision(self):
-        player = self.player.sprite
+    def horizontalMovementCollision(self,player):
         player.rect.x += player.direction.x * player.speed
 
 
@@ -184,18 +186,8 @@ class Level:
                 elif player.direction.x > 0:
                     player.rect.right = sprite.rect.left
                     self.currentX = player.rect.right
-
-        for sprite in self.tileGroup.sprites():
-            if sprite.rect.colliderect(player.rect):
-                if player.direction.x < 0: 
-                    player.rect.left = sprite.rect.right
-                    self.currentX = player.rect.left
-                elif player.direction.x > 0:
-                    player.rect.right = sprite.rect.left
-                    self.currentX = player.rect.right
                     
-    def verticalMovementCollision(self):
-        player = self.player.sprite
+    def verticalMovementCollision(self,player):
         player.applyGravity()
 
         for sprite in self.tileGroup.sprites():
@@ -208,31 +200,47 @@ class Level:
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = 0
         
-        for sprite in self.tileGroup.sprites():
-            if sprite.rect.colliderect(player.rect) == True:
-                if player.direction.y > 0: 
-                    player.rect.bottom = sprite.rect.top
-                    player.direction.y = 0
-                    player.onGround = True
-                if player.direction.y < 0:
-                    player.rect.top = sprite.rect.bottom
-                    player.direction.y = 0
-                    sprite.kill()
-                    self.score = self.score + 25
+    
+    def enemyVerticalCollision(self):
 
-    def playerEnemyCollisionCheck(self):
+        for enemy in self.enemyGroup.sprites():
+            enemy.applyGravity()
+            for sprite in self.tileGroup.sprites():
+                if sprite.rect.colliderect(enemy.rect) == True:
+                    if enemy.direction.y > 0: 
+                        enemy.rect.bottom = sprite.rect.top
+                        enemy.direction.y = 0
+                        enemy.onGround = True
+                    if enemy.direction.y < 0:
+                        enemy.rect.top = sprite.rect.bottom
+                        enemy.direction.y = 0
+
+    def enemyCollisionReverse(self):
+        
+        for sprite in self.tileGroup.sprites():
+            for enemy in self.enemyGroup.sprites():
+                if sprite.rect.colliderect(enemy.rect):
+                    if enemy.direction.x < 0: 
+                        enemy.rect.left = sprite.rect.right
+                        self.currentX = enemy.rect.left
+                        enemy.reverse()
+                    elif enemy.direction.x > 0:
+                        enemy.rect.right = sprite.rect.left
+                        self.currentX = enemy.rect.right
+                        enemy.reverse()
+    def playerEnemyCollisionCheck(self,player):
         if self.currentClock>=self.timeOfHit+2:
             self.timeOfHit=10000000000000000000
             self.hitCD = 0
-        enemyCollisionsTop = pygame.sprite.spritecollide(self.player.sprite,self.enemyGroup,False)
-        enemyCollisionsSide = pygame.sprite.spritecollide(self.player.sprite,self.enemyGroup,False)
+        enemyCollisionsTop = pygame.sprite.spritecollide(player,self.enemyGroup,False)
+        enemyCollisionsSide = pygame.sprite.spritecollide(player,self.enemyGroup,False)
         if enemyCollisionsTop:
             for thisEnemy in enemyCollisionsTop:
                 enemyCenter = thisEnemy.rect.centery
                 enemyTop = thisEnemy.rect.top
-                playerBottom = self.player.sprite.rect.bottom
-                if enemyTop < playerBottom < enemyCenter and self.player.sprite.direction.y >= 0:
-                    self.player.sprite.direction.y = -15
+                playerBottom = player.rect.bottom
+                if enemyTop < playerBottom < enemyCenter and player.direction.y >= 0:
+                    player.direction.y = -15
                     (x,y) = thisEnemy.rect.topleft
                     thisEnemy.kill()
                     Explosion((x,y),64,self.explosionGroup)
@@ -241,32 +249,29 @@ class Level:
         if enemyCollisionsSide:
             for enemy in enemyCollisionsSide:
                 enemyCenter = enemy.rect.centery
-                player=self.player.sprite.rect.centery
+                playerY=self.player.sprite.rect.centery
 
-                if enemyCenter<=player and self.hitCD == 0:
+                if enemyCenter<=playerY and self.hitCD == 0:
                     self.playerHealth=self.playerHealth - 1
                     self.hitCD=1
                     self.timeOfHit=self.currentClock
 
                     if self.playerHealth == 0:
-                        self.respawn()
-    
+                        self.respawn(player)
 
-    def enemyCollisionReverse(self):
-        for enemy in self.enemyGroup.sprites():
-            if pygame.sprite.spritecollide(enemy,self.tileGroup,False) or pygame.sprite.spritecollide(enemy,self.tileGroup,False):
-                enemy.reverse()
 
-    def playerCoinCollisionCheck(self):
-        coinCollisions = pygame.sprite.spritecollide(self.player.sprite,self.coinGroup,False)
+
+                    
+    def playerCoinCollisionCheck(self,player):
+        coinCollisions = pygame.sprite.spritecollide(player,self.coinGroup,False)
         if coinCollisions:
             for coin in coinCollisions:
                 self.coinCount=(self.coinCount+1)
                 self.playerHealth=2
                 coin.kill()
         
-    def playerFlagCollisionCheck(self):
-        flagCollisions = pygame.sprite.spritecollide(self.player.sprite,self.flag,False)
+    def playerFlagCollisionCheck(self,player):
+        flagCollisions = pygame.sprite.spritecollide(player,self.flag,False)
         if flagCollisions:
             self.finishState = True
 
@@ -301,18 +306,22 @@ class Level:
   
         self.levelSurface.fill('black')
             
+        if(self.multiplayer==True):
+            self.playerEnemyCollisionCheck(self.otherPlayer.sprite)
+            self.playerCoinCollisionCheck(self.otherPlayer.sprite)
+            self.playerFlagCollisionCheck(self.otherPlayer.sprite)
 
-
-        self.fallOutOfBounds()
+        self.fallOutOfBounds(self.player.sprite)
 
         self.enemyCollisionReverse()
-        self.playerEnemyCollisionCheck()
+        self.enemyVerticalCollision()
+        self.playerEnemyCollisionCheck(self.player.sprite)
 
-        self.horizontalMovementCollision()
-        self.verticalMovementCollision()
+        self.horizontalMovementCollision(self.player.sprite)
+        self.verticalMovementCollision(self.player.sprite)
 
-        self.playerCoinCollisionCheck()
-        self.playerFlagCollisionCheck()
+        self.playerCoinCollisionCheck(self.player.sprite)
+        self.playerFlagCollisionCheck(self.player.sprite)
 
         self.tileGroup.update()
 
@@ -339,7 +348,7 @@ class Level:
         self.player.draw(self.levelSurface)
         self.otherPlayer.draw(self.levelSurface)
         
-        self.displaySurface.blit(self.levelSurface,(0,0),area=(self.player.sprite.rect.topleft[0]-(screenWidth/2),0,screenWidth,screenHeight))
+        self.displaySurface.blit(self.levelSurface,(0,0),area=(self.player.sprite.rect.topleft[0]-(self.screenWidth/2),0,self.screenWidth,self.screenHeight))
 
         
 

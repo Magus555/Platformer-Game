@@ -1,3 +1,5 @@
+from queue import Queue
+import time
 import pygame, sys
 from settings import * 
 from level import Level
@@ -8,6 +10,8 @@ import os
 
 
 pygame.init()
+screenWidth = pygame.display.Info().current_w
+screenHeight = pygame.display.Info().current_h
 screen = pygame.display.set_mode((screenWidth,screenHeight))
 clock = pygame.time.Clock()
 
@@ -83,8 +87,14 @@ def menu():
         if settingsButton.draw(screen):
             settings()
         if hostButton.draw(screen):
+            connected = Queue()
             level = Level(1,screen)
-            level.levelServer()
+            level.levelServer(connected)
+            screen.fill('black')
+            screen.blit(Text(("Waiting for player to join")), (50,50))
+            pygame.display.update()
+            while(connected.empty()!=False):
+                pass
             game(level)
             saveUpdate(level.coinCount,level.lives,1)
         if clientButton.draw(screen):

@@ -6,24 +6,31 @@ class Enemy(Tile):
     def __init__(self,pos,size,groups):
         super().__init__(pos,size,size,pygame.image.load("graphics/enemy/run/2.png"),groups)
         self.rect = self.image.get_rect(topleft = pos)
-        self.speed = randint(1,2)
+        self.speed = 2
         self.size = size
         self.lastUpdate = 0
         self.loopIndex = 5
         self.frameIndex = 0
         self.animationSpeed = 150
         self.dead = 0
+        self.gravity = 0.8
+        self.direction = pygame.math.Vector2(0,0)
+        self.direction.x = 1
 
         self.frameSet = []
         for i in range(1,7):
             self.frameSet.append(pygame.image.load('graphics/enemy/run/'+str(i)+'.png'))
 
 
+    def applyGravity(self):
+        self.direction.y += self.gravity
+        self.rect.y += self.direction.y
 
     def move(self):
         self.rect.x += self.speed
 
     def reverse(self):
+        self.direction *= -1
         self.speed *= -1
 
     def frameIncrementer(self):

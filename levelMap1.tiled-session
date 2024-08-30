@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "mapLevel3.tmx",
+    "activeFile": "mapLevel1.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -20,30 +20,36 @@
             "scaleInEditor": 4
         },
         "mapLevel1.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
             "scale": 2,
-            "selectedLayer": 0,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 396.75,
-                "y": 236.5
+                "x": 562.75,
+                "y": 236
             }
         },
         "mapLevel2.tmx": {
             "expandedObjectLayers": [
+                3,
                 4,
                 5,
-                2,
-                3
+                2
             ],
             "scale": 1.5,
-            "selectedLayer": 2,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 445.66666666666674,
+                "x": 446.33333333333326,
                 "y": 148.66666666666669
             }
         },
         "mapLevel3.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
             "scale": 1,
-            "selectedLayer": 4,
+            "selectedLayer": 2,
             "viewCenter": {
                 "x": 499.5,
                 "y": 0
@@ -77,11 +83,11 @@
     ],
     "project": "levelMap1.tiled-project",
     "recentFiles": [
-        "mapLevel1.tmx",
-        "myTerrainSet.tsx",
-        "Background.tsx",
-        "mapLevel2.tmx",
         "mapLevel3.tmx",
+        "mapLevel2.tmx",
+        "Background.tsx",
+        "myTerrainSet.tsx",
+        "mapLevel1.tmx",
         "myTileset.tsx"
     ],
     "tileset.lastUsedFilter": "All Files (*)",
