@@ -98,8 +98,15 @@ def menu():
             game(level)
             saveUpdate(level.coinCount,level.lives,1)
         if clientButton.draw(screen):
+            connected = Queue()
             level = Level(1,screen)
-            level.clientJoinServer()
+            level.clientJoinServer(connected)
+            screen.fill('black')
+            screen.blit(Text(("Waiting for player to join")), (50,50))
+            pygame.display.update()
+            while(connected.empty()!=False):
+                pass
+
             game(level)
             saveUpdate(level.coinCount,level.lives,1)
         pygame.display.update()

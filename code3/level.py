@@ -110,8 +110,9 @@ class Level:
         self.playerNum = 2
         self.q = Queue()
         print("now joining")
-        self.clientNetwork = Network()
-        clientThread = threading.Thread(target=self.clientNetwork.connect, name='clientThread',args=(self.player.sprite, connected, ))
+        self.clientNetwork = Network(connected)
+        self.otherPlayer.add(Player(self.player.sprite.getPos()))
+        clientThread = threading.Thread(target=self.clientNetwork.connect, name='clientThread',args=(self.player.sprite,  self.otherPlayer.sprite))
         clientThread.start()
         self.clientNetwork.send('this is a big fat message')
 
