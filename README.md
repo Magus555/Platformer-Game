@@ -7,3 +7,6 @@ I've also created simple working multiplayer. I am happy with progress so far, b
 Multiplayer is not fully functional, but the sockets are working which is the main part of multiplayer I wanted to solve.
 Showcase of the state of the game:
 https://www.youtube.com/watch?v=Pw6xHO_9_f8
+
+The showcase for the 27th august doesn't show the respawn feature, this can be seen here:
+https://www.youtube.com/watch?v=7H-BHYI4C90
