@@ -11,4 +11,4 @@ https://www.youtube.com/watch?v=Pw6xHO_9_f8
 The showcase for the 27th august doesn't show the respawn feature, this can be seen here:
 https://www.youtube.com/watch?v=7H-BHYI4C90
 
-If you want to try it, run the main.py file.
+If you want to try it, run the main.exe file.
